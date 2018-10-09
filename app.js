@@ -73,11 +73,19 @@ app.use('/', index);
 const projectRoutes = require('./routes/project-routes');
 app.use('/api', projectRoutes);
 
+const addClientRoutes = require('./routes/addclient-routes');
+app.use('/api', addClientRoutes);
+
 const invoiceRoutes = require('./routes/invoice-routes');
 app.use('/api', invoiceRoutes);
 
 const authRoutes = require('./routes/auth-routes');
 app.use('/api', authRoutes);
+
+app.use((req, res, next) => {
+  // If no routes match, send them the React HTML.
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 
 module.exports = app;

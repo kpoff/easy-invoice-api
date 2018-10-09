@@ -8,24 +8,9 @@ const User = require('../models/User');
 
 // GET route => to get all the projects
 router.get('/projects', (req, res, next) => {
-  Project.find()
-  .populate({
-    path:'projects',
-    populate:[{
-      path: 'contractor',
-      model: 'User'
-  },
-  {
-      path: 'client',
-      model: 'User'
-  },
-  {
-      path: 'invoiceHistory',
-      model: 'Invoice'
-  }]
-})
-    .then(allTheProjects => {
-      res.json(allTheProjects);
+  User.findById(req.user._id).populate('projectHistory')
+    .then(theUser => {
+      res.json(theUser);
     })
     .catch(err => {
       res.json(err);
@@ -35,23 +20,33 @@ router.get('/projects', (req, res, next) => {
 
 // POST route => to create a new project
 router.post('/projects', (req, res, next)=>{
+  
+  console.log("req.body", req.body)
+  console.log("req.user", req.user)
  
     Project.create({
-      contractor: req.user._id,
-      client: req.body.client,
       location: req.body.location,
       description: req.body.description,
       estimate: req.body.estimate,
       clientRequests: req.body.clientRequests,
       status: req.body.status,
-      type: req.body.type
+      type: req.body.type,
+      contractor: req.user._id
     })
-      .then(response => {
+    .then((response)=>{
+      User.findByIdAndUpdate(req.user._id, {
+        $push: {projectHistory: response._id}
+    })
+      .then((response)=>{
         res.json(response);
       })
-      .catch(err => {
+      .catch((err) => {
         res.json(err);
       })
+    })
+    .catch((err)=>{
+      next(err);
+    })
   });
 
 
