@@ -10,6 +10,7 @@ const userSchema = new Schema({
   role: {type: String, enum: ['Client', 'Contractor'], required: true},
   firstName: {type: String, required: true},
   lastName: {type: String, required: true},
+  businessName: {type: String},
   address: {type: String},
   phone: {type: String},
   projectHistory: [{type: Schema.Types.ObjectId, ref: "Project"}],

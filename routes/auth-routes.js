@@ -13,9 +13,10 @@ const User       = require('../models/User');
 authRoutes.post('/signup', (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    const role = req.body.role;
+    const role = "Contractor";
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
+    const businessName = req.body.businessName;
     const address = req.body.address;
     const phone = req.body.phone;
 
@@ -53,6 +54,7 @@ authRoutes.post('/signup', (req, res, next) => {
             role: role,
             firstName: firstName,
             lastName: lastName,
+            businessName: businessName,
             address: address,
             phone: phone
         });

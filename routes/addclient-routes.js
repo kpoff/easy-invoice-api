@@ -16,6 +16,7 @@ router.post('/addclient', (req, res, next)=>{
       password: req.body.password,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
+      businessName: req.body.businessName,
       address: req.body.address,
       phone: req.body.phone,
       projectHistory: [req.body.projectID]

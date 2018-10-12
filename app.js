@@ -64,7 +64,7 @@ app.use(passport.session());
 
 app.use(cors({
   credentials: true,
-  origin: ['http://localhost:3000', 'https://easy-invoice.herokuapp.com']
+  origin: ['http://localhost:3000', 'http://easy-invoice.herokuapp.com']
 }));
 
 const index = require('./routes/index');
@@ -82,10 +82,10 @@ app.use('/api', invoiceRoutes);
 const authRoutes = require('./routes/auth-routes');
 app.use('/api', authRoutes);
 
-app.use((req, res, next) => {
-  // If no routes match, send them the React HTML.
-  res.sendFile(__dirname + "/public/index.html");
-});
+// app.use((req, res, next) => {
+//   // If no routes match, send them the React HTML.
+//   res.sendFile(__dirname + "/public/index.html");
+// });
 
 
 module.exports = app;

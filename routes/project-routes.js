@@ -3,10 +3,9 @@ const express = require('express');
 const router  = express.Router();
 const mongoose = require('mongoose');
 const Project = require('../models/Project');
-const Invoice = require('../models/Invoice');
 const User = require('../models/User');
 
-// GET route => to get all the projects
+// GET route => to get the User's projects
 router.get('/projects', (req, res, next) => {
   User.findById(req.user._id).populate('projectHistory')
     .then(theUser => {
@@ -20,18 +19,15 @@ router.get('/projects', (req, res, next) => {
 
 // POST route => to create a new project
 router.post('/projects', (req, res, next)=>{
-  
-  console.log("req.body", req.body)
-  console.log("req.user", req.user)
  
     Project.create({
-      location: req.body.location,
+      contractor: req.user._id,
+      title: req.body.title,
       description: req.body.description,
+      location: req.body.location,
       estimate: req.body.estimate,
       clientRequests: req.body.clientRequests,
-      status: req.body.status,
-      type: req.body.type,
-      contractor: req.user._id
+      status: req.body.status
     })
     .then((response)=>{
       User.findByIdAndUpdate(req.user._id, {
@@ -49,45 +45,20 @@ router.post('/projects', (req, res, next)=>{
     })
   });
 
-
-  // GET route => to get a specific project/detailed view
 router.get('/projects/:id', (req, res, next)=>{
 
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
       res.status(400).json({ message: 'Specified id is not valid' });
       return;
-    }
-  
-    // our projects have array of tasks' ids and 
-    // we can use .populate() method to get the whole task objects
-    //                                   ^
-    //                                   |
-    //                                   |
-    Project.findById(req.params.id)
-    .populate({
-      path:'projects',
-      populate:[{
-        path: 'contractor',
-        model: 'User'
-    },
-    {
-        path: 'client',
-        model: 'User'
-    },
-    {
-        path: 'invoiceHistory',
-        model: 'Invoice'
-    }]
-  })
-      .then(response => {
-        res.json(response);
-      })
-      .catch(err => {
-        res.json(err);
-      })
-  })
-
-
+    }                                 
+    Project.findById(req.params.id).populate('client')
+    .then(response => {
+      res.json(response);
+    })
+    .catch(err => {
+      res.json(err);
+    })
+})
 
 
 
@@ -109,10 +80,6 @@ router.put('/projects/:id', (req, res, next)=>{
   })
 
 
-
-
-  
-  
   // DELETE route => to delete a specific project
   router.delete('/projects/:id', (req, res, next)=>{
   
@@ -129,11 +96,6 @@ router.put('/projects/:id', (req, res, next)=>{
         res.json(err);
       })
   })
-
-
-
-
-
 
 
 module.exports = router;
